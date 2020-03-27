@@ -12,11 +12,13 @@
 	<script src="{{url_for('static', filename='charts.js')}}" type="text/babel"></script>
 	<script type="text/babel">
 		const chartTitle = '{{chart_title}}'
+		const chartDate = {{chart_date | tojson | safe}}
 		const chartColumns = {{table_headers | tojson | safe}}
 		const chartRows = {{table_rows | tojson | safe}}
 		
 		const root = document.querySelector('#root')
-		root.innerHTML = Chart(chartTitle, chartColumns, chartRows)
+		
+		root.innerHTML = Chart(chartTitle, chartDate, chartColumns, chartRows)
 	</script>
 </body>
 
