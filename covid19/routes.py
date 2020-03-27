@@ -12,7 +12,8 @@ def index():
 	with open('covid19/options.json', 'r') as options:
 	  appOptions = json.load(options)
 	  
-	  fileName = utils.parseDateToFilename({'day': 24, 'month': 3, 'year': 2020}, appOptions['DATA_FILE_FORMAT'])
+	  date = {'day':25, 'month':3, 'year':2020}
+	  fileName = utils.parseDateToFilename(date, appOptions['DATA_FILE_FORMAT'])
 	  
 	  loop = asyncio.get_event_loop()
 	  data = loop.run_until_complete(fetch_data.getData(fileName, appOptions['COVID_DATA_BASE_URL']))
@@ -24,5 +25,6 @@ def index():
 	  	'index.html', 
 	  	title='Covid-19 App',
 	  	chart_title='covid19 charts', 
+	  	chart_date=date,
 	  	table_headers=tableHeaders, 
 	  	table_rows=tableRows)
