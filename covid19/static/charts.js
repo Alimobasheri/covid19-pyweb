@@ -14,8 +14,9 @@ const ChartRows = rows =>
 		+'</tr>'
 	,'')
 
-const Chart = (title, columns, rows) => 
+const Chart = (title, date, columns, rows) => 
 	`<h1 class='chart-title'>${title}</h1>
+	<span class='chart-date'>${date.day}/${date.month}/${date.year}</span>
 	<table class='chart'>
 		<thead>
 			${ChartColumns(columns)}
