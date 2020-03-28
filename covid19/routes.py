@@ -15,7 +15,8 @@ def index():
 	  date = {'day':25, 'month':3, 'year':2020}
 	  fileName = utils.parseDateToFilename(date, appOptions['DATA_FILE_FORMAT'])
 	  
-	  loop = asyncio.get_event_loop()
+	  loop = asyncio.new_event_loop()
+          asyncio.set_event_loop(loop)
 	  data = loop.run_until_complete(fetch_data.getData(fileName, appOptions['COVID_DATA_BASE_URL']))
 	  loop.stop()
 	  dataList = csv_parse.csvToArray(data)
