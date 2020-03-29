@@ -1,4 +1,5 @@
 import asyncio
+import threading
 from flask import render_template
 import json
 
@@ -16,7 +17,7 @@ def index():
 	  fileName = utils.parseDateToFilename(date, appOptions['DATA_FILE_FORMAT'])
 	  
 	  loop = asyncio.new_event_loop()
-          asyncio.set_event_loop(loop)
+	  asyncio.set_event_loop(loop)
 	  data = loop.run_until_complete(fetch_data.getData(fileName, appOptions['COVID_DATA_BASE_URL']))
 	  loop.stop()
 	  dataList = csv_parse.csvToArray(data)
