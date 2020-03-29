@@ -1,5 +1,4 @@
 import asyncio
-import threading
 from flask import render_template
 import json
 
@@ -22,7 +21,7 @@ def index():
 	  loop.stop()
 	  dataList = csv_parse.csvToArray(data)
 	  tableHeaders = dataList[0]
-	  tableRows = dataList[1:5]
+	  tableRows = dataList[1:40]
 	  return render_template(
 	  	'index.html', 
 	  	title='Covid-19 App',
