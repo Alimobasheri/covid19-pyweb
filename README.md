@@ -12,13 +12,13 @@ Currently the app is in development state and may not be completely functioning.
 If you don't have python installed, install python3.
 
 This web app requires flask package for python to serve th webpage. You can install by pip.
-$ pip install flask
+<code>$ pip install flask</code>
 
 The web app needs network connection and the only frontend required module (babeljs) is cdn based. 
 
 <b>How to run</b>:
 Clone this repository to your machine. In cmd redirect to the code base folder and type:
-$ python3 covid-19.py
+<code>$ python3 covid-19.py</code>
 
 If ran successfully a message appears which says the app is running on http://127.0.0.1:5000. Enter this address in your browser and you should see the results. 
 
