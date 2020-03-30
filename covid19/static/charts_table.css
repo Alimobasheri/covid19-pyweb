@@ -1,0 +1,57 @@
+.chart-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: column;
+	color: #DFD0BB;
+	font-family: sans-serif;
+	overflow-x: auto;
+}
+
+.chart-title-date-wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+	align-items: center;
+}
+
+.chart-title {
+	font-size: 3rem;
+	line-height: 5rem;
+	font-family: 'Raleway';
+	color: #E5BD77;
+	padding: 0 0.5rem;
+}
+
+.chart-date {
+	font-size: 1.5rem;
+	font-family: 'Nixie One';
+	background-color: ;
+}
+
+.chart-table {
+	padding: 0.5rem 0.5rem;
+	font-size: 1.5rem;
+	border-spacing: 0;
+}
+
+.chart-head-row {
+	background-color: #CC7952;
+	padding: 1rem 2rem;
+}
+
+.chart-head-td {
+	margin: 0;
+	padding: 1vh 2vw;
+}
+
+.chart-body {
+	padding: 0.2vh 2vw;
+}
+
+.chart-body > tr {
+	padding: 1vh 0;
+}
+
+.chart-body-td {
+	padding: 1vh 2vw;
+}
