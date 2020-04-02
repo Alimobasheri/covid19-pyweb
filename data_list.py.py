@@ -1,11 +1,11 @@
-def data_merge(lst,mergeby,initV,func):
+def dataMerge(lst,mergeby,initV,func):
     c=[(lst[0][i],initV)[i in mergeby]for i in range(len(lst[0]))]
     for y in mergeby:
        for x in lst:
           c[y]=func(c[y],x[y])
     return c
 
-def GroupBy(lst,index, filterby=lambda x : True):
+def groupBy(lst,index, filterBy=lambda x : True):
     c=[]
     i=0
     b=[]
