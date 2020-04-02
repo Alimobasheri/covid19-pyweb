@@ -23,7 +23,5 @@ def GroupBy(lst,index, filterby=lambda x : True):
         i =i+1
     return c     
         
-groups=GroupBy(a,0)
-result=[data_merge(x,[1,2,3],0,lambda a,b:a+b)for x in groups]
 
 
