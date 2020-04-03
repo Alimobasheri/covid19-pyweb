@@ -1,57 +1,55 @@
-import re
+import asyncio
+import json
+from datetime import datetime
 
-def omitCommas(row):
-	"""
-	Locates data parts with double quotes and removes commas within them.
-	
-	Parameters:
-		row (str): The csv string to be searched for double quotes.
-	
-	Returns:
-		(str): The same string without double quotes and extra commas.
-	"""
-	cases = re.findall('"[^"]+"', row)
-	replaced = [re.sub('[",]', '', cases[i]) for i in range(len(cases)) if i%2 is 0]
-	for i in range(len(cases)):
-		if i%2 is 0:
-			row = row.replace(cases[i], replaced[i])
-	return row
+from flask import redirect, url_for, render_template, request, jsonify
 
-def csvToList(csv, delimiter=','):
-	"""
-	Turn CSV string into list.
-	
-	Each line is splitted with \n and turned into rows. If the row contains double quotes, they're removed by omitCommas to prevent conflicts with comma delimiting the rows. Then each row is turned into a list of columns by splitting strings by comma. 
-	
-	Parameters:
-		csv (str): CSV data to be parsed.
-		
-	Returns:
-		(list): A list containing all data rows and columns. 
-	"""
-	rows = csv.decode().split('\n')
-	return [(row, omitCommas(row))['"' in row].split(delimiter) for row in rows]
+from covid19 import app
+from covid19 import csv_parse
+from covid19 import fetch_data
+from covid19 import utils
+from covid19 import data_list
 
-def getHeaders(lst, filterOne, filterTwo):
-	"""
-	Find indexes of desired values.
-	
-	Gets a list and finds index for values which exist either in filter one or filter two.
-	
-	Parameters:
-		lst (list): Main list which includes the values.
+@app.route('/')
+def index():
+	today = datetime.utcnow()
+	dateStr = request.args.get('date', default=utils.getLatestDate(today, -1))
+	return redirect(url_for('tables', date=dateStr))
+
+@app.route('/tables')
+def tables():
+	today = datetime.utcnow()
+	dateStr = request.args.get('date', default=utils.getLatestDate(today, -1))
+	with open('covid19/options.json', 'r') as options:
+		appOptions = json.load(options)
 		
-		filterOne (list): A list containing values to find indexes of in the main list.
+		date = datetime.strptime(dateStr, '%m-%d-%Y')
+		jsonDate = {'day': date.day, 'month': date.month, 'year': date.year}
+		fileName = utils.parseDateToFilename(date, appOptions['DATA_FILE_FORMAT'])
 		
-		filterTwo (list): A list to check by for the same index of a value from filterOne if it does not exist in the main list. 
+		loop = asyncio.new_event_loop()
+		asyncio.set_event_loop(loop)
+		data = loop.run_until_complete(fetch_data.getData(fileName, appOptions['COVID_DATA_BASE_URL']))
+		loop.stop()
 		
-	Returns:
-		(list): A list containing indexes of values either from filterOne or filterTwo.
-	"""
-	headers = []
-	for i in range(len(filterOne)):
-		if filterOne[i] in lst:
-			headers.append(lst.index(filterOne[i]))
-		else:
-			headers.append(lst.index(filterTwo[i]))
-	return headers
+		dataList = csv_parse.csvToList(data)
+		
+		filteredIndices = csv_parse.getHeaders(dataList[0], appOptions['TABLE_TITLES_OLD'].split('+'), appOptions['TABLE_TITLES_NEW'].split('+'))
+		
+		tableHeaders = [dataList[0][x] for x in filteredIndices]
+		
+		sortedList = sorted(dataList[1:len(dataList)-2], key=lambda x: x[filteredIndices[0]])
+		
+		tableRows = [[x[y] for y in filteredIndices] for x in sortedList[1:]]
+		
+		groupedRows = data_list.groupBy(tableRows, 0)
+		mergedRows = [data_list.dataMerge(group, [2, 3, 4], 0, lambda a, b : a+int(b)) for group in groupedRows]
+		mergedRows = sorted(mergedRows, key=lambda x: x[2], reverse=True)
+		
+		return render_template(
+		'index.html',
+		title='Covid-19 App',
+		chart_title='covid19 charts',
+		chart_date=jsonDate,
+		table_headers=tableHeaders,
+		table_rows=mergedRows)
