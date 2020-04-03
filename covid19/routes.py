@@ -1,43 +1,57 @@
-import asyncio
-import json
+import re
 
-from flask import redirect, url_for, render_template
+def omitCommas(row):
+	"""
+	Locates data parts with double quotes and removes commas within them.
+	
+	Parameters:
+		row (str): The csv string to be searched for double quotes.
+	
+	Returns:
+		(str): The same string without double quotes and extra commas.
+	"""
+	cases = re.findall('"[^"]+"', row)
+	replaced = [re.sub('[",]', '', cases[i]) for i in range(len(cases)) if i%2 is 0]
+	for i in range(len(cases)):
+		if i%2 is 0:
+			row = row.replace(cases[i], replaced[i])
+	return row
 
-from covid19 import app
-from covid19 import csv_parse
-from covid19 import fetch_data
-from covid19 import utils
+def csvToList(csv, delimiter=','):
+	"""
+	Turn CSV string into list.
+	
+	Each line is splitted with \n and turned into rows. If the row contains double quotes, they're removed by omitCommas to prevent conflicts with comma delimiting the rows. Then each row is turned into a list of columns by splitting strings by comma. 
+	
+	Parameters:
+		csv (str): CSV data to be parsed.
+		
+	Returns:
+		(list): A list containing all data rows and columns. 
+	"""
+	rows = csv.decode().split('\n')
+	return [(row, omitCommas(row))['"' in row].split(delimiter) for row in rows]
 
-@app.route('/')
-def index():
-	return redirect(url_for('tables', page=1))
-
-@app.route('/tables/<page>')
-def tables(page):
-	with open('covid19/options.json', 'r') as options:
-		appOptions = json.load(options)
+def getHeaders(lst, filterOne, filterTwo):
+	"""
+	Find indexes of desired values.
+	
+	Gets a list and finds index for values which exist either in filter one or filter two.
+	
+	Parameters:
+		lst (list): Main list which includes the values.
 		
-		date = {'day':28, 'month':3, 'year':2020}
-		fileName = utils.parseDateToFilename(date, appOptions['DATA_FILE_FORMAT'])
+		filterOne (list): A list containing values to find indexes of in the main list.
 		
-		loop = asyncio.new_event_loop()
-		asyncio.set_event_loop(loop)
-		data = loop.run_until_complete(fetch_data.getData(fileName, appOptions['COVID_DATA_BASE_URL']))
-		loop.stop()
+		filterTwo (list): A list to check by for the same index of a value from filterOne if it does not exist in the main list. 
 		
-		dataList = csv_parse.csvToArray(data)
-		sortedList = sorted(dataList[1:len(dataList)-1], key=lambda x: x[3])
-		
-		filteredIndices = [3, 4, 7, 8, 9]
-		tableHeaders = [dataList[0][x] for x in filteredIndices]
-		
-		indexZero = (1, (int(page)-1)*50)[int(page) is not None]
-		tableRows = [[x[y] for y in filteredIndices] for x in sortedList[indexZero: indexZero+50]]
-		
-		return render_template(
-		'index.html',
-		title='Covid-19 App',
-		chart_title='covid19 charts',
-		chart_date=date,
-		table_headers=tableHeaders,
-		table_rows=tableRows)
+	Returns:
+		(list): A list containing indexes of values either from filterOne or filterTwo.
+	"""
+	headers = []
+	for i in range(len(filterOne)):
+		if filterOne[i] in lst:
+			headers.append(lst.index(filterOne[i]))
+		else:
+			headers.append(lst.index(filterTwo[i]))
+	return headers
