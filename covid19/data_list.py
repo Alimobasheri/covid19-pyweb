@@ -10,7 +10,7 @@ def groupBy(lst,index, filterBy=lambda x : True):
     i=0
     b=[]
     while i<len(lst):
-        if filterby(lst[i]):
+        if filterBy(lst[i]):
             if i<len(lst)-1 and lst[i][index]==lst[i+1][index]:
                 b.append(lst[i])
             elif lst[i][index]==lst[i-1][index]:
