@@ -1,4 +1,6 @@
 {
   "COVID_DATA_BASE_URL" : "https://github.com/CSSEGISandData/COVID-19/raw/master/csse_covid_19_data/csse_covid_19_daily_reports",
-  "DATA_FILE_FORMAT": "csv"
+  "DATA_FILE_FORMAT": "csv",
+  "TABLE_TITLES_OLD": "Country/Region+Last Update+Confirmed+Deaths+Recovered",
+  "TABLE_TITLES_NEW": "Country_Region+Last_Update+Confirmed+Deaths+Recovered"
 }
