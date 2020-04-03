@@ -1,5 +1,5 @@
 const ChartColumns = columns =>
-	columns.reduce((titles, title, idx) =>
+	'<td> ID</td>'+columns.reduce((titles, title, idx) =>
 		`${titles}<td key='${idx}' class='chart-head-td'>
 			${title}
 		</td>`
@@ -7,7 +7,7 @@ const ChartColumns = columns =>
 
 const ChartRows = rows => 
 	rows.reduce((accrows, row, ridx) =>
-		accrows+`<tr key=${ridx}>`+
+		accrows+`<tr key=${ridx}><td>${ridx+1}</td>`+
 			row.reduce((items, item, itidx) =>
 				`${items}<td key=${itidx} class='chart-body-td'>${item}</td>`
 			,'')
