@@ -1,6 +1,6 @@
-def dataMerge(lst,mergeby,initV,func):
-    c=[(lst[0][i],initV)[i in mergeby]for i in range(len(lst[0]))]
-    for y in mergeby:
+def dataMerge(lst,mergeBy,initV,func):
+    c=[(lst[0][i],initV)[i in mergeBy]for i in range(len(lst[0]))]
+    for y in mergeBy:
        for x in lst:
           c[y]=func(c[y],x[y])
     return c
